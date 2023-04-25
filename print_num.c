@@ -124,8 +124,9 @@ int print_binary(va_list args, flags_t *flags)
 	char *binary_num;
 	int count = 0;
 
-	binary_num = convert_num(num, 2, UNSIGNED, flags);
 	num = va_arg(args, unsigned int);
+
+	binary_num = convert_num(num, 2, UNSIGNED, flags);
 
 	if (flags->hash && num)
 	{

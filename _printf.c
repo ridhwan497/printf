@@ -30,13 +30,13 @@ int _printf(const char *format, ...)
 		}
 		start = str;
 		str++;
-		while (print_flags(&flags, str)) /* while char at str is flag char */
+		while (print_flags(str, &flags)) /* while char at str is flag char */
 		{
 			str++; /* next char */
 		}
 		str = get_width(str, &flags, args);
 		str = get_precision(str, &flags, args);
-		if (get_modifier(str, &flags))
+		if (get_modify(str, &flags))
 			str++;
 		if (!handle_format_specifier(str))
 			count += print_range(start, str,

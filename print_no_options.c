@@ -49,7 +49,7 @@ int print_left(char *str, flags_t *flags)
 	char ch;
 
 	count = 0;
-	index = strlen(str);
+	index = _strlen(str);
 	ch = ' ';
 
 	if (flags->zero && !flags->minus)

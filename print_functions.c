@@ -23,7 +23,7 @@ int print_integer(va_list args, flags_t *flags)
 		num = (int)va_arg(args, int);
 	}
 
-	return (print_number(convert(args, 10, 0, flags), flags));
+	return (print_num_op(convert_num(num, 10, 0, flags), flags));
 	/* 10 is base 10 */ /* 0 is for unsigned */
 }
 
@@ -74,8 +74,8 @@ int print_string(va_list args, flags_t *flags)
 	(void)flags;
 	if ((int)(!str))
 		str = NULL_S;
-	count2 = strlen(str);
-	padding = strlen(str);
+	count2 = _strlen(str);
+	padding = _strlen(str);
 
 	if (flags->precision < padding)
 		padding = flags->precision;
@@ -100,7 +100,7 @@ int print_string(va_list args, flags_t *flags)
 			for (count = 0; count < padding; count++)
 				total += _putchar(*str++);
 		else
-			total += _puts(str);
+			total += puts_str(str);
 	}
 	return (total);
 }
@@ -129,9 +129,11 @@ int print_percent(va_list arg, flags_t *flags)
 */
 int print_custom(va_list args, flags_t *flags)
 {
-	int *hex_va;
+	char *hex_va;
 	char *str;
 	int total = 0;
+
+	str = va_arg(args, char *);
 
 	if ((int)(!str))
 	{
@@ -147,10 +149,10 @@ int print_custom(va_list args, flags_t *flags)
 			/* 16 is base 16 */ /* 0 is for unsigned */
 			if (!hex_va[1])
 			{
-				total += puts_str('0');
+				total += _putchar('0');
 			}
 
-			total += _putchar(hex_va);
+			total += puts_str(hex_va);
 		}
 		else
 		{
