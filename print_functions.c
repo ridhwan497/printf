@@ -8,26 +8,23 @@
 
 int print_integer(va_list args, flags_t *flags)
 {
-	long int num;
-	char *int_num;
-	int count = 0;
+	long num;
 
-	if (flags->height)
+	if (flags->length)
 	{
-		num = (unsigned short int)va_arg(args, unsigned int);
+		num = va_arg(args, long);
 	}
-	else if (flags->length)
+	else if (flags->height)
 	{
-		num = va_arg(args, long int);
+		num = (short int)va_arg(args, int);
 	}
 	else
 	{
-		num = va_arg(args, int);
+		num = (int)va_arg(args, int);
 	}
-	int_num = convert_num(num, 10, 0, flags);
-	count += puts_str(int_num);
-	free(int_num);
-	return (count);
+
+	return (print_number(convert(args, 10, 0, flags), flags));
+	/* 10 is base 10 */ /* 0 is for unsigned */
 }
 
 /**
@@ -60,6 +57,7 @@ int print_ch(va_list args, flags_t *flags)
 		_putchar(char_printed);
 		total++;
 	}
+
 	return (total);
 }
 
@@ -74,50 +72,41 @@ int print_string(va_list args, flags_t *flags)
 	count = 0;
 
 	(void)flags;
-	if (str == NULL)
-		str = "(null)";
-	
-	count2 = padding = strlen(str);
+	if ((int)(!str))
+		str = NULL_S;
+	count2 = strlen(str);
+	padding = strlen(str);
 
 	if (flags->precision < padding)
+		padding = flags->precision;
 		count2 = flags->precision;
-	
+
 	if (flags->minus)
 	{
-		while (count2--)
+		if (flags->precision != UINT_MAX)
 		{
-			_putchar(*str);
-			str++;
-			total++;
+			for (count = 0; count < padding; count++)
+				total += _putchar(*str++);
 		}
+		else
+			total += puts_str(str);
 	}
-	else
-	{
-		total += puts_str(str);
-	}
-	while (padding-- > count2)
-	{
-		_putchar(' ');
-		total++;
-	}
+	while (count2++ < flags->width)
+		total += _putchar(' ');
+
 	if (!flags->minus)
 	{
-		while (count2--)
-		{
-			_putchar(*str);
-			str++;
-			total++;
-		}
-	}
-	else
-	{
-		total += puts_str(str);
+		if (flags->precision != UINT_MAX)
+			for (count = 0; count < padding; count++)
+				total += _putchar(*str++);
+		else
+			total += _puts(str);
 	}
 	return (total);
 }
 
 /**
-* print_percent - prints a percent sign 
+* print_percent - prints a percent sign
 * @arg: argument passed
 * @flags: struct flags
 * Return: number of characters printed
@@ -125,28 +114,11 @@ int print_string(va_list args, flags_t *flags)
 
 int print_percent(va_list arg, flags_t *flags)
 {
-	unsigned int padding, total;
-
-	padding = 1;
-	total = 0;
 	(void)arg;
 
-	if (flags->minus)
-	{
-		_putchar('%');
-		total++;
-	}
-	while (padding++ < flags->width)
-	{
-		_putchar(' ');
-		total++;
-	}
-	if (!flags->minus)
-	{
-		_putchar('%');
-		total++;
-	}
-	return (total);
+	(void)flags;
+
+	return (_putchar('%'));
 }
 
 /**
@@ -162,16 +134,22 @@ int print_custom(va_list args, flags_t *flags)
 	int total = 0;
 
 	if ((int)(!str))
+	{
 		return (puts_str(NULL_S));
+	}
 	for (; *str; str++)
 	{
 		if ((*str > 0 && *str < 32) || *str >= 127)
 		{
-			total += puts_str('\\');
-			total += puts_str('x');
+			total += _putchar('\\');
+			total += _putchar('x');
 			hex_va = convert_num(*str, 16, 0, flags);
+			/* 16 is base 16 */ /* 0 is for unsigned */
 			if (!hex_va[1])
+			{
 				total += puts_str('0');
+			}
+
 			total += _putchar(hex_va);
 		}
 		else

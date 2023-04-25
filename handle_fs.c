@@ -3,16 +3,13 @@
 /**
  * handle_format_specifier - handles format specifiers
  * @ptr: pointer to the format string
- * @args: arguments passed to _printf
- * @flags: struct containing formatting flags
  * Return: number of characters printed
  */
 
 int (*handle_format_specifier(char *ptr))(va_list args, flags_t *flags)
 {
 	int index = 0;
-	print_t print[] = 
-	{
+	print_t print[] = {
 		{"c", print_ch},
 		{"s", print_string},
 		{"d", print_integer},
@@ -21,12 +18,13 @@ int (*handle_format_specifier(char *ptr))(va_list args, flags_t *flags)
 		{"u", unsigned_num},
 		{"o", print_octal_number},
 		{"x", print_hex_lowercase},
+		{"p", print_address},
 		{"X", print_hex_uppercase},
-		{"p", print_pointer},
 		{"r", print_reverse},
 		{"R", print_rot13},
 		{"S", print_custom},
 		{"%", print_percent},
+		{NULL, NULL}
 	};
 
 	while (print[index].c)
@@ -39,9 +37,9 @@ int (*handle_format_specifier(char *ptr))(va_list args, flags_t *flags)
 }
 
 /**
- * format_function - handles format specifiers 
+ * format_function - handles format specifiers
  * @ptr: pointer to the format string
- * @arg: arguments passed 
+ * @arg: arguments passed
  * @flags: struct containing formatting flags
  * Return: number of characters printed
  */
@@ -53,49 +51,42 @@ int format_function(char *ptr, va_list arg, flags_t *flags)
 	f = handle_format_specifier(ptr);
 	if (f)
 		return (f(arg, flags));
-	else
-		return (0);
+
+	return (0);
 }
+
 /**
- * get_modifier - gets the modifier for a format string
+ * get_modify - gets the modifier for a format string
  * @ptr: pointer to the format string
  * @flags: struct containing formatting flags
  * Return: ptr created.
  */
- 
-char *get_modifier(char *ptr, flags_t *flags)
+
+int get_modify(char *ptr, flags_t *flags)
 {
+	int index;
+
+	index = 0;
+
 	switch (*ptr)
 	{
-	case 'h':
-		if (*(ptr + 1) == 'h')
-		{
-			flags->modifier = HH;
-			ptr++;
-		}
-		else
-			flags->modifier = H;
-		break;
-	case 'l':
-		if (*(ptr + 1) == 'l')
-		{
-			flags->modifier = LL;
-			ptr++;
-		}
-		else
-			flags->modifier = L;
-		break;
+		case 'h':
+			index = flags->height = 1;
+			break;
+		case 'l':
+			index = flags->length = 1;
+			break;
 	}
-	return (ptr);
+	return (index);
 }
 /**
  * print_flags - prints the flags
  * @flags: struct containing formatting flags
- * *str: pointer to the format string
+ * @str: pointer to the format string
  * Return: number of characters printed
  */
 
-int print_flags(flags_t *flags, char *str)
+int print_flags(char *str, flags_t *flags)
 {
 	int index = 0;
 
@@ -121,8 +112,8 @@ int print_flags(flags_t *flags, char *str)
 }
 
 /**
- * get_width - gets the width for a format string
- * @ptr: pointer to the format string
+ * get_width - gets the width of string
+ * @ptr: pointer to string
  * @flags: struct containing formatting flags
  * @arg: arguments passed
  * Return: ptr created.
@@ -130,21 +121,19 @@ int print_flags(flags_t *flags, char *str)
 
 char *get_width(char *ptr, flags_t *flags, va_list arg)
 {
+	int index = 0;
+
 	if (*ptr == '*')
 	{
-		flags->width = va_arg(arg, int);
-		if (flags->width < 0)
-		{
-			flags->minus = 1;
-			flags->width *= -1;
-		}
+		index = va_arg(arg, int);
 		ptr++;
 	}
 	else
 	{
-		flags->width = _atoi(ptr);
 		while (_isdigit(*ptr))
-			ptr++;
+			index = index * 10 + (*ptr++ - '0');
 	}
+	flags->width = index;
+
 	return (ptr);
 }

@@ -24,25 +24,6 @@ int print_range(char *begin, char *end, char *excempt)
 }
 
 /**
- * print_pointer - prints str pointer
- * @args: argument passed
- * @flags: struct flags
- * Return: number of characters printed
- */
-
-int print_pointer(va_list args, flags_t *flags)
-{
-	char *pointer;
-	int count = 0;
-
-	(void)flags;
-	pointer = va_arg(args, char *);
-	count += puts_str("0x");
-	count += print_range(pointer, pointer + 7, pointer + 4);
-	return (count);
-}
-
-/**
  * print_reverse - prints str string in reverse
  * @args: argument passed
  * @flags: struct flags
@@ -65,17 +46,20 @@ int print_reverse(va_list args, flags_t *flags)
 			i++;
 		}
 		str--;
-		
+
 		for (; i > 0; i--, str--)
 		{
 			count += _putchar(*str);
 		}
 	}
+
 	return (count);
 }
 
 /**
  * print_rot13 - prints string in rot13
+ * rot13 is a simple letter substitution cipher that replaces a letter
+ * with the letter 13 letters after it in the alphabet.
  * @args: argument passed
  * @flags: struct flags
  * Return: number of characters printed
@@ -84,28 +68,30 @@ int print_reverse(va_list args, flags_t *flags)
 int print_rot13(va_list args, flags_t *flags)
 {
 	int count;
-	int i, index;
+	int count2;
+	int index;
 	char rot_array[] =
 		"NOPQRSTUVWXYZABCDEFGHIJKLM      nopqrstuvwxyzabcdefghijklm";
-	char *str = va_arg(args, char *);
+	char *str;
 
+	str = va_arg(args, char *);
 	count = 0;
-	i = 0;
+	count2 = 0;
 	index = 0;
 
 	(void)flags;
 
-	while (str[i]) 
+	while (str[count2])
 	{
-		if ((str[i] >= 'A' && str[i] <= 'Z')
-		    || (str[i] >= 'a' && str[i] <= 'z'))
+		if ((str[count2] >= 'A' && str[count2] <= 'Z')
+		    || (str[count2] >= 'a' && str[count2] <= 'z'))
 		{
-			index = str[i] - 65;
+			index = str[count2] - 65;
 			count += _putchar(rot_array[index]);
 		}
 		else
-			count += _putchar(str[i]);
-		i++;
+			count += _putchar(str[count2]);
+		count2++;
 	}
 	return (count);
 }
