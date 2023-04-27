@@ -78,9 +78,10 @@ int print_string(va_list args, flags_t *flags)
 	padding = _strlen(str);
 
 	if (flags->precision < padding)
+	{
 		padding = flags->precision;
 		count2 = flags->precision;
-
+	}
 	if (flags->minus)
 	{
 		if (flags->precision != UINT_MAX)
