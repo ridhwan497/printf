@@ -18,8 +18,7 @@ int _putchar(int c)
 	}
 	if (c != FLUSH)
 	{
-		buffer[count] = c;
-		count++;
+		buffer[count++] = c;
 	}
 	return (1);
 }
@@ -40,6 +39,5 @@ int puts_str(char *s)
 	{
 		_putchar(*s++);
 	}
-	_putchar('\n');
 	return (ptr - s);
 }

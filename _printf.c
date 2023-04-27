@@ -44,7 +44,7 @@ int _printf(const char *format, ...)
 		else
 			count += format_function(str, args, &flags);
 	}
-	_putchar(-1);
+	_putchar(FLUSH);
 
 	va_end(args);
 	return (count);
