@@ -20,7 +20,6 @@ int print_range(char *begin, char *end, char *excempt)
 		}
 		begin++;
 	}
-	free(begin);
 	return (count);
 }
 
@@ -53,7 +52,6 @@ int print_reverse(va_list args, flags_t *flags)
 			count += _putchar(*str);
 		}
 	}
-	free (str);
 	return (count);
 }
 
@@ -94,6 +92,5 @@ int print_rot13(va_list args, flags_t *flags)
 			count += _putchar(str[count2]);
 		count2++;
 	}
-	free(str);
 	return (count);
 }
