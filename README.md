@@ -1,25 +1,7 @@
 ![image](https://user-images.githubusercontent.com/126829982/235145391-61e0761b-7c79-4bda-a9ed-08a0dad31a87.png)
-PRINTF PROJECT
-
-Description
-In C programming language, printf() is a standard library function that is used to print or display formatted output to the console or standard output stream (stdout). It stands for "print formatted" and is declared in the header file stdio.h.
-The printf() function takes a format string as its first argument, followed by a variable number of arguments that correspond to the placeholders in the format string. The format string contains both literal text and format specifiers, which are used to control the display of the values passed in as arguments.
-This time, in order to comprehend the complexity of a potent tool, we are showing a printf project that was created from scratch in the majority of its features. To learn how _printf functions, go to man 3 of printf.
-
-Compilation
-$ gcc -Wall -Werror -Wextra -pedantic *.c
-Prototype
-int _printf(const char *format, ...)
-Return
-The function returns the total amount of characters produced if everything goes according to plan.
-Formats
-Specifiers	Description
-%c	Prints single character
-%s	Prints string of characters
-%d	Prints decimal numbers
-%i	Prints integers
 
 Project files
+
 main.h : Include all function prototypes and structure of specifiers
 
 _printf.c : This code defines a function called _printf, which takes a format string and optional arguments and produces output according to the format string. The function iterates over the format string, parsing it for format specifiers (beginning with a '%') and handling each one according to its type. It uses a buffer to store the output and writes to the standard output when the buffer is full or when the iteration is complete. The function returns the total number of characters printed.
