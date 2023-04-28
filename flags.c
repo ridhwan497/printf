@@ -1,24 +1,32 @@
 #include "main.h"
 
 /**
-*initialize_flags - initializes flags struct
-* it also resets the buffer
-* @flags: struct flags
-* @args: argument passed
-*/
-
-void initialize_flags(flags_t *flags, va_list args)
+ * get_flags - Calculates active flags
+ * @format: Formatted string in which to print the arguments
+ * @i: pointer to current index in the format string
+ *
+ * Return: Flags:
+ */
+int get_flags(const char *format, int *i)
 {
-	flags->length = 0;
-	flags->height = 0;
+    int flags = 0;
+    int curr_i = *i + 1;
+    bool stop = false;
+    
+    while (!stop && format[curr_i] != '\0') {
+        switch (format[curr_i]) {
+            case '-': flags |= F_MINUS; break;
+            case '+': flags |= F_PLUS; break;
+            case '0': flags |= F_ZERO; break;
+            case '#': flags |= F_HASH; break;
+            case ' ': flags |= F_SPACE; break;
+            default: stop = true; break;
+        }
+        if (!stop) {
+            curr_i++;
+        }
+    }
+    *i = curr_i - 1;
 
-	flags->plus = 0;
-	flags->space = 0;
-	flags->hash = 0;
-	flags->zero = 0;
-	flags->minus = 0;
-
-	flags->width = 0;
-	flags->precision = UINT_MAX; /*defined in limits.h*/
-	(void)args;
+    return flags;
 }
