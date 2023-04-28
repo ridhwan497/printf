@@ -1,107 +1,68 @@
+
 #include "main.h"
+
+void print_buffer(char buffer[], int *buff_ind);
+
 /**
- * _printf - produces output according to a format
- * @format: format string
- * Return: number of characters printed
+ * _printf - Printf function
+ * @format: format.
+ * Return: Printed chars.
  */
 int _printf(const char *format, ...)
 {
-	int count = 0;
-	va_list args;
-	char *p = (char *)format;
-	char buffer[BUFF_SIZE] = {0};
-	int buffer_len = 0;
-	va_start(args, format);
-	while (*p)
+	int i, printed = 0, printed_chars = 0;
+	int flags, width, precision, size, buff_ind = 0;
+	va_list list;
+	char buffer[BUFF_SIZE];
+
+	if (format == NULL)
+		return (-1);
+
+	va_start(list, format);
+
+	for (i = 0; format && format[i] != '\0'; i++)
 	{
-		if (*p != '%')
+		if (format[i] != '%')
 		{
-			buffer[buffer_len++] = *p;
-			if (buffer_len == BUFF_SIZE)
-			{
-				count += write(STDOUT_FILENO, buffer, buffer_len);
-				buffer_len = 0;
-			}
-			p++;
-			count++;
-			continue;
+			buffer[buff_ind++] = format[i];
+			if (buff_ind == BUFF_SIZE)
+				print_buffer(buffer, &buff_ind);
+			/* write(1, &format[i], 1);*/
+			printed_chars++;
 		}
-		p++;
-		if (*p == '%')
+		else
 		{
-			buffer[buffer_len++] = *p;
-			if (buffer_len == BUFF_SIZE)
-			{
-				count += write(STDOUT_FILENO, buffer, buffer_len);
-				buffer_len = 0;
-			}
-			p++;
-			count++;
-			continue;
-		}
-		int width = -1, precision = -1;
-		while (*p && is_flag(*p))
-			update_flag(*p++, &width, &precision);
-		if (*p && isdigit(*p))
-			width = extract_number(&p);
-		if (*p == '.')
-		{
-			p++;
-			if (*p && isdigit(*p))
-				precision = extract_number(&p);
-			else
-				precision = 0;
-		}
-		char specifier = *p++;
-		switch (specifier)
-		{
-			case 'c':
-				count += handle_char(buffer, &buffer_len, va_arg(args, int));
-				break;
-			case 's':
-				count += handle_string(buffer, &buffer_len, va_arg(args, char *), precision);
-				break;
-			case 'd':
-			case 'i':
-				count += handle_integer(buffer, &buffer_len, va_arg(args, int), width, precision);
-				break;
-			case 'u':
-				count += handle_unsigned(buffer, &buffer_len, va_arg(args, unsigned int), width, precision);
-				break;
-			case 'o':
-				count += handle_octal(buffer, &buffer_len, va_arg(args, unsigned int), width, precision);
-				break;
-			case 'x':
-				count += handle_hex(buffer, &buffer_len, va_arg(args, unsigned int), width, precision, 0);
-				break;
-			case 'X':
-				count += handle_hex(buffer, &buffer_len, va_arg(args, unsigned int), width, precision, 1);
-				break;
-			case 'p':
-				count += handle_pointer(buffer, &buffer_len, va_arg(args, void *));
-				break;
-			default:
-				buffer[buffer_len++] = '%';
-				if (buffer_len == BUFF_SIZE)
-				{
-					count += write(STDOUT_FILENO, buffer, buffer_len);
-					buffer_len = 0;
-				}
-				if (*p)
-				{
-					buffer[buffer_len++] = *p++;
-					if (buffer_len == BUFF_SIZE)
-					{
-						count += write(STDOUT_FILENO, buffer, buffer_len);
-						buffer_len = 0;
-					}
-				}
-				count++;
-				break;
+			print_buffer(buffer, &buff_ind);
+			flags = get_flags(format, &i);
+			width = get_width(format, &i, list);
+			precision = get_precision(format, &i, list);
+			size = get_size(format, &i);
+			++i;
+			printed = handle_print(format, &i, list, buffer,
+				flags, width, precision, size);
+			if (printed == -1)
+				return (-1);
+			printed_chars += printed;
 		}
 	}
-	if (buffer_len > 0)
-		count += write(STDOUT_FILENO, buffer, buffer_len);
-	va_end(args);
-	return count;
+
+	print_buffer(buffer, &buff_ind);
+
+	va_end(list);
+
+	return (printed_chars);
 }
+
+/**
+ * print_buffer - Prints the contents of the buffer if it exist
+ * @buffer: Array of chars
+ * @buff_ind: Index at which to add next char, represents the length.
+ */
+void print_buffer(char buffer[], int *buff_ind)
+{
+	if (*buff_ind > 0)
+		write(1, &buffer[0], *buff_ind);
+
+	*buff_ind = 0;
+}
+
